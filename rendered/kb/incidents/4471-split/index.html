@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>#4471 · split date-report causes</title>
+    <style>
+      :root { color-scheme: light; font-family: system-ui, sans-serif; color: #17212b; background: #fff; }
+      main { max-width: 860px; margin: 3rem auto; padding: 0 1.25rem; line-height: 1.55; }
+      table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; }
+      th, td { padding: .7rem; border-bottom: 1px solid #d5dbe3; text-align: left; vertical-align: top; }
+      th { background: #f5f7fa; }
+      .muted, footer { color: #586574; }
+      code { background: #f1f3f5; padding: .1rem .25rem; border-radius: .2rem; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>#4471 · split date-report causes</h1>
+      <p>#4471 was marked as one known parser problem. Its export contains 412 unique reports, but the tenant and booking-form data split them into two independently fixable causes.</p>
+
+      <h2>Split tickets</h2>
+      <p><strong>412</strong> unique reports were merged into #4471. They describe two causes, not one.</p>
+      <table>
+        <thead>
+          <tr><th>ticket</th><th>cause</th><th>reports</th><th>tenants</th><th>seen</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><a href="https://github.com/krzysiekkuligowski/mega-s01e03-what-it-shows/issues/1">#1</a></td>
+            <td><strong>Day-first dates are parsed month-first</strong><br /><span class="muted">The shared parser treats a day-first tenant date as month-first, so the month and day flip.</span></td>
+            <td>379</td><td>11</td><td>2026-04-01 → 2026-10-04</td>
+          </tr>
+          <tr>
+            <td><a href="https://github.com/krzysiekkuligowski/mega-s01e03-what-it-shows/issues/2">#2</a></td>
+            <td><strong>booking-v3 suggests MM/DD/YYYY for day-first tenants</strong><br /><span class="muted">The booking-v3 form tells people to enter MM/DD/YYYY, then reads that value in the tenant locale.</span></td>
+            <td>33</td><td>3</td><td>2026-04-17 → 2026-09-22</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Why these are separate</h2>
+      <h3>Shared parser</h3>
+      <p>Every tenant in this incident writes dates day first. The shared parser reads those dates month first, so a valid day-first date can land on the wrong calendar day. This is the parser ticket.</p>
+      <h3>booking-v3 date hint</h3>
+      <p>Three day-first tenants use <code>booking-v3</code>. Its date field displays <code>MM/DD/YYYY</code>, so people enter a month-first value that the tenant-locale form then interprets day first. This is a form-hint ticket, not the shared parser defect.</p>
+
+      <h2>Method</h2>
+      <p>The export repeats 15 rows, so report IDs were deduplicated before counting. Each unique report was classified from its tenant locale, booking form, and intake channel using <code>causeOf</code> in <code>src/lib/kb/causes.ts</code>.</p>
+      <footer>desk ref <strong>DR-S893-VCG6</strong></footer>
+    </main>
+  </body>
+</html>

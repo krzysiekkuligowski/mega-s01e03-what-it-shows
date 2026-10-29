@@ -1,0 +1,41 @@
+---
+layout: runbook
+title: '#4471 · split date-report causes'
+owner: krzysiekkuligowski
+status: triaged
+reviewed: 2026-10-29
+signature: krzysiekkuligowski
+---
+
+<script>
+  import Incident4471Split from '#lib/kb/Incident4471Split.svelte';
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
+</script>
+
+#4471 was marked as one known parser problem. Its export contains 412 unique reports, but the
+tenant and booking-form data split them into two independently fixable causes.
+
+## Split tickets
+
+<Incident4471Split />
+
+## Why these are separate
+
+### Shared parser
+
+Every tenant in this incident writes dates day first. The shared parser reads those dates month
+first, so a valid day-first date can land on the wrong calendar day. This is the parser ticket.
+
+### booking-v3 date hint
+
+Three day-first tenants use `booking-v3`. Its date field displays `MM/DD/YYYY`, so people enter a
+month-first value that the tenant-locale form then interprets day first. This is a form-hint ticket,
+not the shared parser defect.
+
+## Method
+
+The export repeats 15 rows, so report IDs were deduplicated before counting. Each unique report was
+classified from its tenant locale, booking form, and intake channel using `causeOf` in
+`src/lib/kb/causes.ts`.
+
+<RenderStamp {signature} />
