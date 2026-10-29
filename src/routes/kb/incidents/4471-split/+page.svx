@@ -4,6 +4,7 @@ title: '#4471 · split date-report causes'
 owner: krzysiekkuligowski
 status: triaged
 reviewed: 2026-10-29
+sourceTicket: 4471
 signature: krzysiekkuligowski
 ---
 
@@ -18,6 +19,11 @@ tenant and booking-form data split them into two independently fixable causes.
 ## Split tickets
 
 <Incident4471Split />
+
+## Filed tickets
+
+- [#1 · Day-first dates parsed month-first — 379 reports](https://github.com/krzysiekkuligowski/mega-s01e03-what-it-shows/issues/1)
+- [#2 · booking-v3 date hint conflicts with tenant locale — 33 reports](https://github.com/krzysiekkuligowski/mega-s01e03-what-it-shows/issues/2)
 
 ## Why these are separate
 
